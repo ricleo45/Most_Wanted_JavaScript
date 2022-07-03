@@ -29,10 +29,10 @@ function app(people) {
             searchResults = searchByName(people);
             break;
         case "no":
-            //! TODO #4: Declare a searchByTraits (multiple traits) function //////////////////////////////////////////
-                //! TODO #4a: Provide option to search for single or multiple //////////////////////////////////////////
-            searchResults = searchByTraits(people);
+            //! TODO #4: Declare a searchByTraits (multiple traits) function /////////////////////////////////////////
+            searchResults = searchByMultipleTraits(people);
             break;
+            //! TODO #4a: Provide option to search for single or multiple //////////////////////////////////////////
         default:
             // Re-initializes the app() if neither case was hit above. This is an instance of recursion.
             app(people);
@@ -81,10 +81,12 @@ function mainMenu(person, people) {
             let personDescendants = findPersonDescendants(person[0], people);
             alert(personDescendants);
             break;
+
         case "restart":
             // Restart app() from the very beginning
             app(people);
             break;
+        
         case "quit":
             // Stop application execution
             return;
@@ -101,10 +103,20 @@ function mainMenu(person, people) {
  * @param {Array} people        A collection of person objects.
  * @returns {Array}             An array containing the person-object (or empty array if no match)
  */
+ function searchByOccupation(people) {
+    let occupation = promptFor("What is the person's occupation? ", chars);
+    // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
+    let foundPerson = people.filter(function (person) {
+        if (person.occupation === occupation) {
+            return true;
+        }
+    });
+    return foundPerson;
+}
+
 function searchByName(people) {
     let firstName = promptFor("What is the person's first name?", chars);
     let lastName = promptFor("What is the person's last name?", chars);
-
     // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
     let foundPerson = people.filter(function (person) {
         if (person.firstName === firstName && person.lastName === lastName) {
@@ -114,6 +126,33 @@ function searchByName(people) {
     return foundPerson;
 }
 // End of searchByName()
+
+// Search By Single Trait()
+function searchByTrait(people) {
+    let eyeColor = promptFor("Eye Color: ", chars);
+    let displayPerson = people.filter(function (person) {
+        if (person.eyeColor === eyeColor) {
+            return true;
+        }
+    });
+    return alert(displayPeople(displayPerson));
+}
+// End of searchByTrait()
+
+// searchByMultiple()
+function searchByMultipleTraits(people) {
+    let inColor = promptFor("Eye Color: ", chars);
+    let inGender = promptFor("Gender: ", chars);
+    let displayPerson = people.filter(function (person) {
+        if (person.eyeColor === inColor || person.gender === inGender) {
+            return true;
+        }
+    });
+    return alert(displayPeople(displayPerson));
+}
+// End of searchByMultipleTraits()
+
+// The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
 
 /**
  * This function will be useful for STRINGIFYING a collection of person-objects
@@ -125,7 +164,7 @@ function displayPeople(people) {
     alert(
         people
             .map(function (person) {
-                return `${person.firstName} ${person.lastName}`;
+                return `${person.firstName} ${person.lastName} ${person.eyeColor} ${person.gender}`;
             })
             .join("\n")
     );
@@ -138,10 +177,11 @@ function displayPeople(people) {
  * @param {Object} person       A singular object.
  */
 function displayPerson(person) {
-    let personInfo = `First Name: ${person.firstName}\n`;
+    personInfo = `First Name: ${person.firstName}\n`;
     personInfo += `Last Name: ${person.lastName}\n`;
+
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
-    alert(personInfo);
+    alert(person.personInfo);
 }
 // End of displayPerson()
 
