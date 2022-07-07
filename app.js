@@ -18,8 +18,8 @@
 function app(people) {
     // promptFor() is a custom function defined below that helps us prompt and validate input more easily
     // Note that we are chaining the .toLowerCase() immediately after the promptFor returns its value
-    let searchType = promptFor(
-        "Do you know the name of the person you are looking for? Enter 'yes' or 'no'",
+    let searchType = promptFor (
+    "Do you know the name of the person you are looking for? Enter 'yes' or 'no'",
         yesNo
     ).toLowerCase();
     let searchResults;
@@ -30,9 +30,9 @@ function app(people) {
             break;
         case "no":
             //! TODO #4: Declare a searchByTraits (multiple traits) function /////////////////////////////////////////
-            searchResults = searchByMultipleTraits(people);
-            break;
+            searchResults = traitChoise(people);
             //! TODO #4a: Provide option to search for single or multiple //////////////////////////////////////////
+            break;
         default:
             // Re-initializes the app() if neither case was hit above. This is an instance of recursion.
             app(people);
@@ -66,7 +66,7 @@ function mainMenu(person, people) {
         case "info":
             //! TODO #1: Utilize the displayPerson function //////////////////////////////////////////
             // HINT: Look for a person-object stringifier utility function to help
-            let personInfo = displayPerson(person[0]);
+            let personInfo = displayPerson(person);
             alert(personInfo);
             break;
         case "family":
@@ -126,31 +126,48 @@ function searchByName(people) {
     return foundPerson;
 }
 // End of searchByName()
-
+function traitChoise(person) {
+    let choice = promptFor("Would you like to search by single trait or multiple? please enter single or multiple:", chars);
+        if (choice === 'single') {
+            return searchByTrait(person);
+        } else if(choice === 'multiple') {
+            return searchByMultipleTraits(person);
+        }
+    }
 // Search By Single Trait()
-function searchByTrait(people) {
+function searchByTrait(person) {
     let eyeColor = promptFor("Eye Color: ", chars);
-    let displayPerson = people.filter(function (person) {
+    let displayPersonEyeColor = person.filter(function (person) {
         if (person.eyeColor === eyeColor) {
             return true;
         }
     });
-    return alert(displayPeople(displayPerson));
+    return displayPerson(displayPersonEyeColor);
 }
 // End of searchByTrait()
 
 // searchByMultiple()
 function searchByMultipleTraits(people) {
-    let inColor = promptFor("Eye Color: ", chars);
-    let inGender = promptFor("Gender: ", chars);
-    let displayPerson = people.filter(function (person) {
+    let inColor = promptFor("What is the subject eye color?: ", chars);
+    let inGender = promptFor("What is the subject gender?: ", chars);
+    let displayPersonMultipleResult = people.filter(function (person) {
         if (person.eyeColor === inColor || person.gender === inGender) {
             return true;
         }
     });
-    return alert(displayPeople(displayPerson));
+    return displayPeople(displayPersonMultipleResult) + console.log(displayPersonMultipleResult);
+
 }
 // End of searchByMultipleTraits()
+
+// findPersonFamily()
+//
+// End of findPersonFamily()
+
+// findPersonTraitDetail()
+//
+// End of findPersonTraitDetail()
+
 
 // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
 
@@ -177,11 +194,25 @@ function displayPeople(people) {
  * @param {Object} person       A singular object.
  */
 function displayPerson(person) {
-    personInfo = `First Name: ${person.firstName}\n`;
-    personInfo += `Last Name: ${person.lastName}\n`;
+    alert(
+        person
+        .map(function(person){
+            return `
+            First: ${person.firstName} 
+            Last: ${person.lastName} 
+            Eye-color: ${person.eyeColor} 
+            Gender: ${person.gender} 
+            DOB: ${person.dob} 
+            Height: ${person.height} 
+            Weight: ${person.weight} 
+            Occupation: ${person.occupation}
+            Spouse: ${person.currentSpouse}`;
 
+        })
+        .join("\n")
+    )
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
-    alert(person.personInfo);
+    
 }
 // End of displayPerson()
 
