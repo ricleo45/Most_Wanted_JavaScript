@@ -18,8 +18,8 @@
 function app(people) {
     // promptFor() is a custom function defined below that helps us prompt and validate input more easily
     // Note that we are chaining the .toLowerCase() immediately after the promptFor returns its value
-    let searchType = promptFor (
-    "Do you know the name of the person you are looking for? Enter 'yes' or 'no'",
+    let searchType = promptFor(
+        "Do you know the name of the person you are looking for? Enter 'yes' or 'no'",
         yesNo
     ).toLowerCase();
     let searchResults;
@@ -29,9 +29,9 @@ function app(people) {
             searchResults = searchByName(people);
             break;
         case "no":
-            //! TODO #4: Declare a searchByTraits (multiple traits) function /////////////////////////////////////////
-            searchResults = traitChoise(people);
+            //! TODO #4: Declare a searchByTraits (multiple traits) function //////////////////////////////////////////
             //! TODO #4a: Provide option to search for single or multiple //////////////////////////////////////////
+            searchResults = searchByTrait(people);
             break;
         default:
             // Re-initializes the app() if neither case was hit above. This is an instance of recursion.
@@ -66,8 +66,8 @@ function mainMenu(person, people) {
         case "info":
             //! TODO #1: Utilize the displayPerson function //////////////////////////////////////////
             // HINT: Look for a person-object stringifier utility function to help
-            let personInfo = displayPerson(person);
-            alert(personInfo);
+            let personInfo = displayPerson(person[0]);
+            alert (personInfo);
             break;
         case "family":
             //! TODO #2: Declare a findPersonFamily function //////////////////////////////////////////
@@ -81,12 +81,10 @@ function mainMenu(person, people) {
             let personDescendants = findPersonDescendants(person[0], people);
             alert(personDescendants);
             break;
-
         case "restart":
             // Restart app() from the very beginning
             app(people);
             break;
-        
         case "quit":
             // Stop application execution
             return;
@@ -103,73 +101,31 @@ function mainMenu(person, people) {
  * @param {Array} people        A collection of person objects.
  * @returns {Array}             An array containing the person-object (or empty array if no match)
  */
- function searchByOccupation(people) {
-    let occupation = promptFor("What is the person's occupation? ", chars);
-    // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
-    let foundPerson = people.filter(function (person) {
-        if (person.occupation === occupation) {
-            return true;
-        }
-    });
-    return foundPerson;
-}
-
 function searchByName(people) {
     let firstName = promptFor("What is the person's first name?", chars);
     let lastName = promptFor("What is the person's last name?", chars);
+
     // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
     let foundPerson = people.filter(function (person) {
         if (person.firstName === firstName && person.lastName === lastName) {
             return true;
         }
     });
+    console.log(foundPerson)
     return foundPerson;
 }
 // End of searchByName()
-function traitChoise(person) {
-    let choice = promptFor("Would you like to search by single trait or multiple? please enter single or multiple:", chars);
-        if (choice === 'single') {
-            return searchByTrait(person);
-        } else if(choice === 'multiple') {
-            return searchByMultipleTraits(person);
-        }
-    }
-// Search By Single Trait()
-function searchByTrait(person) {
-    let eyeColor = promptFor("Eye Color: ", chars);
-    let displayPersonEyeColor = person.filter(function (person) {
-        if (person.eyeColor === eyeColor) {
+
+function searchByTrait(people){
+    let singleTrait = promptFor("what is the subjects EyeColor?", chars);
+    let person = people.filter(function(person) {
+        if (person.eyeColor === singleTrait) {
             return true;
         }
     });
-    return displayPerson(displayPersonEyeColor);
+    return displayPeople(person)
 }
-// End of searchByTrait()
 
-// searchByMultiple()
-function searchByMultipleTraits(people) {
-    let inColor = promptFor("What is the subject eye color?: ", chars);
-    let inGender = promptFor("What is the subject gender?: ", chars);
-    let displayPersonMultipleResult = people.filter(function (person) {
-        if (person.eyeColor === inColor || person.gender === inGender) {
-            return true;
-        }
-    });
-    return displayPeople(displayPersonMultipleResult) + console.log(displayPersonMultipleResult);
-
-}
-// End of searchByMultipleTraits()
-
-// findPersonFamily()
-//
-// End of findPersonFamily()
-
-// findPersonTraitDetail()
-//
-// End of findPersonTraitDetail()
-
-
-// The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
 
 /**
  * This function will be useful for STRINGIFYING a collection of person-objects
@@ -177,14 +133,20 @@ function searchByMultipleTraits(people) {
  * to the user in the form of an alert().
  * @param {Array} people        A collection of person objects.
  */
-function displayPeople(people) {
-    alert(
-        people
-            .map(function (person) {
-                return `${person.firstName} ${person.lastName} ${person.eyeColor} ${person.gender}`;
-            })
-            .join("\n")
-    );
+function displayPeople(people, person) {
+    let infoCount = 0;
+    let userChoice = prompt(people.map(function (person) {
+        return `${++infoCount} ${person.firstName} ${person.lastName}`;
+    })
+    .join("\n")
+    );  
+    --userChoice;
+// trying to append/push to array (person) values from people(userchoice) followed by console.log of person[0] to allow mainMenu to pass person check 0.
+    console.log(people[userChoice]);
+    person.push(people[userChoice]);
+    console.log(person[0]);
+//
+    return mainMenu(person[0])
 }
 // End of displayPeople()
 
@@ -194,25 +156,12 @@ function displayPeople(people) {
  * @param {Object} person       A singular object.
  */
 function displayPerson(person) {
-    alert(
-        person
-        .map(function(person){
-            return `
-            First: ${person.firstName} 
-            Last: ${person.lastName} 
-            Eye-color: ${person.eyeColor} 
-            Gender: ${person.gender} 
-            DOB: ${person.dob} 
-            Height: ${person.height} 
-            Weight: ${person.weight} 
-            Occupation: ${person.occupation}
-            Spouse: ${person.currentSpouse}`;
-
-        })
-        .join("\n")
-    )
+    let personInfo = `First Name: ${person.firstName}\n`;
+    personInfo += `Last Name: ${person.lastName}\n`;
+    personInfo += `Gender:  ${person.gender}\n`;
+    personInfo += `DOB: ${person.dob}\n`;
+    personInfo += `Eye-Color: ${person.eyeColor}\n`;
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
-    
 }
 // End of displayPerson()
 
